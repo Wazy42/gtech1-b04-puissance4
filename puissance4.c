@@ -9,7 +9,8 @@ int jeu() {
       // Mettre à jour tableau
       printf("Hello World\n")
       // Vérfier la victoire
-    }
+	printf("ttttttttttttt")
+	}
   }
 }
 
