@@ -5,6 +5,7 @@ int jeu() {
   for (turn=0; turn<21; turn++) {
     for (player=0; player=0; player++) {
       // Afficher tableau
+      printf("Salutations")
       // Demander colonne
       // Mettre à jour tableau
       // Vérfier la victoire
