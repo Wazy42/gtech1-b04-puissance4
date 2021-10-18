@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #define nbl 6
 #define nbc 7
@@ -20,21 +21,33 @@ int affiche(void) {
   return 0;
 }
 
+int verification(void) {
+  if (/*joueur 1 gagne*/) {
+    return 1;
+  } if (/*joueur 2 gagne*/) {
+    return 2;
+  }
+  return 0;
+}
+
 
 int puis4(void) {
-  int turn, player;
+  // Initialisation grille
   for (int i = 0; i < nbl; i++) {
     for (int j = 0; j < nbc; j++) {
       table[i][j] = ' ';
     }
   }
-
+ 
   // Affichage initial (grille vide)
   affiche();
 
-  for (turn=0; turn<21; turn++) {
-    for (player=0; player=0; player++) {
-      // Tour des joueurs
+  for (int turn = 0; turn < 21; turn++) {
+    for (int player = 0; player = 0; player++) {
+      printf("%d", player+1);
+      }
+ 
+      affiche();
       }
   }
   return 0;
@@ -44,4 +57,3 @@ int puis4(void) {
 int main(void) {
   puis4();
   return 0;
-}
