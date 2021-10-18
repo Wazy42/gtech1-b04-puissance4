@@ -10,11 +10,16 @@ int jeu() {
       // Mettre à jour tableau
       printf("Hello World\n")
       // Vérfier la victoire
-	printf("ttttttttttttt")
 	}
   }
 }
 
 int main() {
+  
   jeu();
 }
+
+
+// Faire un bloc initialisation des joueurs en 0 et 1
+// Faire un bloc tableau en 7 * 6 pour le puissance 4
+// Boucle return value pour vérifier les entrées keyboard
