@@ -5,10 +5,22 @@
 
 char table[nbl][nbc];
 
-
+/*
+Fonction affichage:
+  Ne prends aucun argument.
+  Retourne 0.
+  
+  Affiche le tableau `table` dynamiquement.
+*/
 int affiche(void) {
-  printf(" 1 2 3 4 5 6 7 \n");
-  printf("-v-v-v-v-v-v-v-\n");
+  for (int i = 0; i < nbc; i++) {
+    printf(" %d", i + 1);
+  }
+  printf("\n_");
+  for (int i = 0; i < nbc; i++) {
+    printf("v_");
+  }
+  printf("\n");
   for (int i = 0; i < nbl; i++) {
     printf("|");
     for (int j = 0; j < nbc; j++) {
@@ -16,7 +28,10 @@ int affiche(void) {
     }
     printf("\n");
   }
-  printf("---------------\n");
+  for (int i = 0; i < nbc; i++) {
+    printf("¯¯");
+  }
+  printf("¯\n");
   return 0;
 }
 
