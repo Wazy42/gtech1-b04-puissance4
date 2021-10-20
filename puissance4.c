@@ -74,7 +74,6 @@ int puis4(void) {
       }
  
       affiche();
-      }
   }
   return 0;
 }
@@ -87,5 +86,18 @@ Fonction main:
   Gère les lancements du jeu.
 */
 int main(void) {
-  puis4();
+  while (1) {
+    puis4();
+    char reponse;
+    printf("Voulez-vous rejouer ? \n (o/n) \n");
+    scanf("%c", &reponse);
+
+    if (reponse == 'o') printf("Nouvelle partie initialisée");
+    else if (reponse == 'n') {
+	printf("Dommage à une prochaine fois");
+	return 0;
+      }
+  }
+  
   return 0;
+}
