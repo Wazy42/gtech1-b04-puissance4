@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
 #define nbl 6
 #define nbc 7
 
@@ -36,6 +34,13 @@ int affiche(void) {
   return 0;
 }
 
+/*
+Fonction vérification:
+  Ne prends aucun argument.
+  Retourne 0 si aucun gagnant, 1 si le joueur 1 est gagnant, 2 si le joueur 2 est gagnant.
+
+  Vérifie le contenu de `table` pour vérifier si un jouer a gagné.
+*/
 int verification(void) {
   if (/*joueur 1 gagne*/) {
     return 1;
@@ -45,7 +50,13 @@ int verification(void) {
   return 0;
 }
 
+/*
+Fonction puis4:
+  Ne prends aucun argument.
+  Retourne 0.
 
+  Gère la partie en cours (alternation entre les jouers, mise a jour de `table`, lancement des vérifications...).
+*/
 int puis4(void) {
   // Initialisation grille
   for (int i = 0; i < nbl; i++) {
@@ -68,7 +79,13 @@ int puis4(void) {
   return 0;
 }
 
+/*
+Fonction main:
+  Ne prends aucun argument.
+  Retourne 0.
 
+  Gère les lancements du jeu.
+*/
 int main(void) {
   puis4();
   return 0;
