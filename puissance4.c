@@ -36,16 +36,29 @@ int affiche(void) {
 
 /*
 Fonction vérification:
-  Ne prends aucun argument.
-  Retourne 0 si aucun gagnant, 1 si le joueur 1 est gagnant, 2 si le joueur 2 est gagnant.
+  Argument `player`: caractère du joueur à verifier ('o' ou 'x')
+  Retourne 0 si aucun gagnant, 1 si le joueur `player` est gagnant.
 
   Vérifie le contenu de `table` pour vérifier si un jouer a gagné.
 */
-int verification(void) {
-  if (/*joueur 1 gagne*/) {
-    return 1;
-  } if (/*joueur 2 gagne*/) {
-    return 2;
+int verification(char player) {
+  int count_h, count_v, count_dd, count_dg;
+  for (int x = 0; x < nbc-3; x++) {
+    for (int y = 0; y < nbl-3; y++) {
+      if (table[y][x] != player)
+      count_h = 0, count_v = 0, count_dd = 0, count_dg = 0;
+      for (int n = 0; n < 4; n++) {
+	// Horizontal
+	if (table[y][x+n] == player) count_h++;
+	// Vertical
+	if (table[y+n][x] == player) count_v++;
+	// Diagonal (droite)
+	if (table[y+n][x+n] == player) count_dd++;
+	// diagonal (gauche)
+	if (x > 3 && table[y+n][x-n] == player) count_dg++;
+      }
+      if (count_h == 4 || count_v == 4 || count_dd == 4 || count_dg == 4) return 1;
+    }
   }
   return 0;
 }
