@@ -1,8 +1,10 @@
 #include <stdio.h>
-#define nbl 6
-#define nbc 7
+#define NBL 6
+#define NBC 7
+#define P1 'x'
+#define P2 'o'
 
-char table[nbl][nbc];
+char table[NBL][NBC];
 
 /*
 Fonction affichage:
@@ -12,22 +14,22 @@ Fonction affichage:
   Affiche le tableau `table` dynamiquement.
 */
 int affiche(void) {
-  for (int i = 0; i < nbc; i++) {
+  for (int i = 0; i < NBC; i++) {
     printf(" %d", i + 1);
   }
   printf("\n_");
-  for (int i = 0; i < nbc; i++) {
+  for (int i = 0; i < NBC; i++) {
     printf("v_");
   }
   printf("\n");
-  for (int i = 0; i < nbl; i++) {
+  for (int i = 0; i < NBL; i++) {
     printf("|");
-    for (int j = 0; j < nbc; j++) {
+    for (int j = 0; j < NBC; j++) {
       printf("%c|", table[i][j]);
     }
     printf("\n");
   }
-  for (int i = 0; i < nbc; i++) {
+  for (int i = 0; i < NBC; i++) {
     printf("¯¯");
   }
   printf("¯\n");
@@ -43,8 +45,8 @@ Fonction vérification:
 */
 int verification(char player) {
   int count_h, count_v, count_dd, count_dg;
-  for (int x = 0; x < nbc-3; x++) {
-    for (int y = 0; y < nbl-3; y++) {
+  for (int x = 0; x < NBC-3; x++) {
+    for (int y = 0; y < NBL-3; y++) {
       if (table[y][x] != player)
       count_h = 0, count_v = 0, count_dd = 0, count_dg = 0;
       for (int n = 0; n < 4; n++) {
@@ -55,7 +57,7 @@ int verification(char player) {
 	// Diagonal (droite)
 	if (table[y+n][x+n] == player) count_dd++;
 	// diagonal (gauche)
-	if (x > 3 && table[y+n][x-n] == player) count_dg++;
+	if (table[y+n][NBC-x-n] == player) count_dg++;
       }
       if (count_h == 4 || count_v == 4 || count_dd == 4 || count_dg == 4) return 1;
     }
@@ -72,8 +74,8 @@ Fonction puis4:
 */
 int puis4(void) {
   // Initialisation grille
-  for (int i = 0; i < nbl; i++) {
-    for (int j = 0; j < nbc; j++) {
+  for (int i = 0; i < NBL; i++) {
+    for (int j = 0; j < NBC; j++) {
       table[i][j] = ' ';
     }
   }
@@ -81,12 +83,12 @@ int puis4(void) {
   // Affichage initial (grille vide)
   affiche();
 
-  for (int turn = 0; turn < 21; turn++) {
-    for (int player = 0; player = 0; player++) {
-      printf("%d", player+1);
-      }
- 
-      affiche();
+  int winner = 0, player = 0;
+  char graphics[] = {P1, P2};
+  for (int turn = 0; turn < 42 && !winner; turn++) {
+    /* Faire inserer jeton */
+    winner = verification(graphics[player]);
+    player = !player;
   }
   return 0;
 }
@@ -99,18 +101,5 @@ Fonction main:
   Gère les lancements du jeu.
 */
 int main(void) {
-  while (1) {
-    puis4();
-    char reponse;
-    printf("Voulez-vous rejouer ? \n (o/n) \n");
-    scanf("%c", &reponse);
-
-    if (reponse == 'o') printf("Nouvelle partie initialisée");
-    else if (reponse == 'n') {
-	printf("Dommage à une prochaine fois");
-	return 0;
-      }
-  }
-  
-  return 0;
+  puis4();
 }
