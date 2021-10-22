@@ -1,4 +1,6 @@
 #include <stdio.h>
+//#include <ctype.h>
+#include<unistd.h>
 #define NBL 6
 #define NBC 7
 #define P1 'x'
@@ -59,7 +61,22 @@ int verification(char player) {
 	// diagonal (gauche)
 	if (table[y+n][NBC-x-n] == player) count_dg++;
       }
-      if (count_h == 4 || count_v == 4 || count_dd == 4 || count_dg == 4) return 1;
+      if (count_h == 4) {
+	printf("Hor\n");
+	return 1;
+      }
+      if (count_v == 4) {
+	printf("Ver\n");
+	return 1;
+      }
+      if (count_dd == 4) {
+	printf("dd\n");
+	return 1;
+      }
+      if (count_dg == 4) {
+	printf("dg\n");
+	return 1;
+      }
     }
   }
   return 0;
@@ -83,13 +100,32 @@ int puis4(void) {
   // Affichage initial (grille vide)
   affiche();
 
-  int winner = 0, player = 0;
+  int winner = 0, player = 0, token;
   char graphics[] = {P1, P2};
   for (int turn = 0; turn < 42 && !winner; turn++) {
-    /* Faire inserer jeton */
+    // Saisie et getsion des erreurs:
+    do {
+      printf("Entrez un nombre entre 1 et %d:\n", NBC);
+      int ret = scanf ("%d", &token);
+      if (ret != 1) {
+	char tmp;
+	scanf("%c", &tmp);
+      }
+    } while (token > NBC || token < 1);
+
+    // Ajout des tokens à la grille
+    for (int i = NBL; i > 0; i--) {
+      if (table[i-1][token-1] == ' ') {
+	table[i-1][token-1] = graphics[player];
+	break;
+      }
+    }
+
+    affiche();
     winner = verification(graphics[player]);
     player = !player;
   }
+  printf("Yo ! GG %c tu as gagné mon reufré !", graphics[!player]);
   return 0;
 }
 
