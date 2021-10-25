@@ -1,12 +1,13 @@
 #include <stdio.h>
-//#include <ctype.h>
-#include<unistd.h>
-#define NBL 6
-#define NBC 7
-#define P1 'x'
-#define P2 'o'
+#include <stdlib.h>
+#define DEFAULT_NBL 6
+#define DEFAULT_NBC 7
+#define DEFAULT_P1 'x'
+#define DEFAULT_P2 'o'
 
-char table[NBL][NBC];
+int NBL = DEFAULT_NBL, NBC = DEFAULT_NBC;
+char P1 = DEFAULT_P1, P2 = DEFAULT_P2;
+char** table;
 
 /*
 Fonction affichage:
@@ -16,6 +17,7 @@ Fonction affichage:
   Affiche le tableau `table` dynamiquement.
 */
 int affiche(void) {
+  printf("\n\n");
   for (int i = 0; i < NBC; i++) {
     printf(" %d", i + 1);
   }
@@ -47,35 +49,22 @@ Fonction vérification:
 */
 int verification(char player) {
   int count_h, count_v, count_dd, count_dg;
-  for (int x = 0; x < NBC-3; x++) {
-    for (int y = 0; y < NBL-3; y++) {
-      if (table[y][x] != player)
-      count_h = 0, count_v = 0, count_dd = 0, count_dg = 0;
-      for (int n = 0; n < 4; n++) {
-	// Horizontal
-	if (table[y][x+n] == player) count_h++;
-	// Vertical
-	if (table[y+n][x] == player) count_v++;
-	// Diagonal (droite)
-	if (table[y+n][x+n] == player) count_dd++;
-	// diagonal (gauche)
-	if (table[y+n][NBC-x-n] == player) count_dg++;
-      }
-      if (count_h == 4) {
-	printf("Hor\n");
-	return 1;
-      }
-      if (count_v == 4) {
-	printf("Ver\n");
-	return 1;
-      }
-      if (count_dd == 4) {
-	printf("dd\n");
-	return 1;
-      }
-      if (count_dg == 4) {
-	printf("dg\n");
-	return 1;
+  for (int x = 0; x < NBC; x++) {
+    for (int y = 0; y < NBL; y++) {
+      if (table[y][x] == player) {
+	count_h = 0, count_v = 0, count_dd = 0, count_dg = 0;
+	for (int n = 0; n < 4; n++) {
+	  // Horizontal
+	  if (x < NBC - 3 && table[y][x+n] == player) count_h++;
+	  // Vertical
+	  if (y < NBL - 3 && table[y+n][x] == player) count_v++;
+	  // Diagonal
+	  if (x < NBC - 3 && y < NBL -3) {
+	    if (table[y+n][x+n] == player) count_dd++;
+	    if (table[y+n][NBC-x-n-1] == player) count_dg++;
+	  }
+	}
+	if (count_h == 4 || count_v == 4 || count_dd == 4 || count_dg == 4) return 1;
       }
     }
   }
@@ -105,7 +94,7 @@ int puis4(void) {
   for (int turn = 0; turn < 42 && !winner; turn++) {
     // Saisie et getsion des erreurs:
     do {
-      printf("Entrez un nombre entre 1 et %d:\n", NBC);
+      printf("\nEntrez un nombre entre 1 et %d:\n", NBC);
       int ret = scanf ("%d", &token);
       if (ret != 1) {
 	char tmp;
@@ -120,22 +109,40 @@ int puis4(void) {
 	break;
       }
     }
-
+ 
     affiche();
     winner = verification(graphics[player]);
     player = !player;
   }
-  printf("Yo ! GG %c tu as gagné mon reufré !", graphics[!player]);
+  if (winner) printf("Félicitation ! Joueur '%c' a gagné !\n", graphics[!player]);
+  else printf("Égalité !\n");
   return 0;
 }
 
 /*
 Fonction main:
   Ne prends aucun argument.
-  Retourne 0.
+  Retourne 0 ou 1 si erreur.
 
   Gère les lancements du jeu.
 */
-int main(void) {
+int main(int argc, char *argv[]) {
+  // Récupération arguments programme
+  if (argc == 2) {
+    NBL = *argv[0];
+    NBC = *argv[1];
+  }
+  printf("Lancement en %dx%d.\n", NBL, NBC);
+
+  // Allocation mémoire pour `table`
+  int octets = NBL * NBC * sizeof(char);
+  table = malloc(octets);
+  if (table == NULL) {
+    printf("Allocation de %d octets impossible. Arrêt du programme.\n", octets);
+    return 1;
+  }
+  // Execution du programme puis libèration de la mémoire
   puis4();
+  free(table);
+  return 0;
 }
