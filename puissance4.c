@@ -1,40 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define DEFAULT_NBL 6
-#define DEFAULT_NBC 7
-#define DEFAULT_P1 'x'
-#define DEFAULT_P2 'o'
+// #define WHITE "\033[00;37m"
 
-int NBL = DEFAULT_NBL, NBC = DEFAULT_NBC;
-char P1 = DEFAULT_P1, P2 = DEFAULT_P2;
-char** table;
+int NBL = 6, NBC = 7, NBP = 2;
+char graphics[] = {'x', 'o', 'm', 'z', 'u', 'v', 's', 'i', '%', '#'};
+// char* colors[] = {"\033[00;31m", "\033[00;32m", "\033[00;33m", "\033[00;34m", "\033[00;35m", "\033[00;36m"};
+char** table = NULL;
 
 /*
 Fonction affichage:
   Ne prends aucun argument.
   Retourne 0.
   
-  Affiche le tableau `table` dynamiquement.
+  Affiche le tableau `table` dynamiquement.1
 */
 int affiche(void) {
   printf("\n\n");
   for (int i = 0; i < NBC; i++) {
-    printf(" %d", i + 1);
+    printf("%3d ", i + 1);
   }
   printf("\n_");
   for (int i = 0; i < NBC; i++) {
-    printf("v_");
+    printf("_v__");
   }
   printf("\n");
   for (int i = 0; i < NBL; i++) {
     printf("|");
     for (int j = 0; j < NBC; j++) {
-      printf("%c|", table[i][j]);
+      printf(" %c |", table[i][j]);
     }
     printf("\n");
   }
   for (int i = 0; i < NBC; i++) {
-    printf("¯¯");
+    printf("¯¯¯¯");
   }
   printf("¯\n");
   return 0;
@@ -59,10 +57,8 @@ int verification(char player) {
 	  // Vertical
 	  if (y < NBL - 3 && table[y+n][x] == player) count_v++;
 	  // Diagonal
-	  if (x < NBC - 3 && y < NBL -3) {
-	    if (table[y+n][x+n] == player) count_dd++;
-	    if (table[y+n][NBC-x-n-1] == player) count_dg++;
-	  }
+	  if (x < NBC - 3 && y < NBL - 3 && table[y+n][x+n] == player) count_dd++;
+	  if (x > 3 && y < NBL - 3 && table[y+n][x-n] == player) count_dg++;
 	}
 	if (count_h == 4 || count_v == 4 || count_dd == 4 || count_dg == 4) return 1;
       }
@@ -90,12 +86,11 @@ int puis4(void) {
   affiche();
 
   int winner = 0, player = 0, token;
-  char graphics[] = {P1, P2};
-  for (int turn = 0; turn < 42 && !winner; turn++) {
+  for (int turn = 0; turn < NBL * NBC && !winner; turn++) {
     // Saisie et getsion des erreurs:
     do {
       printf("\nEntrez un nombre entre 1 et %d:\n", NBC);
-      int ret = scanf ("%d", &token);
+      int ret = scanf("%d", &token);
       if (ret != 1) {
 	char tmp;
 	scanf("%c", &tmp);
@@ -112,11 +107,25 @@ int puis4(void) {
  
     affiche();
     winner = verification(graphics[player]);
-    player = !player;
+    player = (turn + 1) % NBP;
   }
   if (winner) printf("Félicitation ! Joueur '%c' a gagné !\n", graphics[!player]);
   else printf("Égalité !\n");
   return 0;
+}
+
+/*
+Fonction allocMalloc:
+  Ne prends aucun argument.
+  Retourne table avec mémoire allouée
+
+  Alloue la mémoire nécessaire au tableau dynamiquement.
+*/
+char **allocMalloc() {
+  char **table = (char**)malloc(NBL * sizeof(char*));
+  for (int i = 0; i < NBL; i++) 
+    table[i] = (char*)malloc(NBC * sizeof(char));
+  return table;
 }
 
 /*
@@ -128,20 +137,25 @@ Fonction main:
 */
 int main(int argc, char *argv[]) {
   // Récupération arguments programme
-  if (argc == 2) {
-    NBL = *argv[0];
-    NBC = *argv[1];
+  if (argc == 3 || argc == 4) {
+    NBL = atoi(argv[1]);
+    NBC = atoi(argv[2]);
+  } else {
+    NBL = 6;
+    NBC = 7;
+  } if (argc == 4) {
+    NBP = atoi(argv[3]);
+    if (NBP < 2 || NBP > 10) NBP = 2;
   }
   printf("Lancement en %dx%d.\n", NBL, NBC);
 
   // Allocation mémoire pour `table`
-  int octets = NBL * NBC * sizeof(char);
-  table = malloc(octets);
+  table = allocMalloc();
   if (table == NULL) {
-    printf("Allocation de %d octets impossible. Arrêt du programme.\n", octets);
+    printf("Allocation de %d octets impossible. Arrêt du programme.\n", NBL * NBC * sizeof(char));
     return 1;
   }
-  // Execution du programme puis libèration de la mémoire
+  // Execution du programme puis libération de la mémoire
   puis4();
   free(table);
   return 0;
