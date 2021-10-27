@@ -5,6 +5,13 @@ int NBL = 6, NBC = 7, NBP = 2;
 char graphics[] = {'x', 'o', 'm', 'z', 'u', 'v'};
 char** table = NULL;
 
+/*
+Fonction colorToken:
+  Prends un caractère en argument.
+  Retourne le caractère coloré.
+
+  Colore le caractère en fonction du joueur.
+*/
 char* colorToken(char token) {
   switch (token) {
   case 'x': return "\033[0;31mx\033[0m";
@@ -22,7 +29,7 @@ Fonction affichage:
   Ne prends aucun argument.
   Retourne 0.
   
-  Affiche le tableau `table` dynamiquement.1
+  Affiche le tableau `table` dynamiquement.
 */
 int affiche(void) {
   int token;
@@ -80,7 +87,12 @@ int verification(char player) {
 }
 
 /*
-Vide le buffer de scanf.
+Fonction fulshstdin:
+  Ne prends aucun argument.
+  Ne retourne rien.
+
+  -- Fournie par le prof --
+  Vide le buffer de scanf.
 */
 void flushstdin() {
   int c;
@@ -92,7 +104,7 @@ Fonction puis4:
   Ne prends aucun argument.
   Retourne 0.
 
-  Gère la partie en cours (alternation entre les jouers, mise a jour de `table`, lancement des vérifications...).
+  Gère la partie en cours (alternation entre les joueurs, mise a jour de `table`, lancement des vérifications...).
 */
 int puis4(void) {
   // Initialisation grille
@@ -131,9 +143,19 @@ int puis4(void) {
     // Détection potentiel gagnant et changement joueur
     affiche();
     winner = verification(graphics[player]);
-    if (winner) printf("Félicitation ! Joueur '%c' a gagné !\n", graphics[player]);    
+    if (winner) {
+      printf(" _______  _______  ___      ___   _______  ___   _______  _______  _______  ___   _______  __    _  _______    __ \n");
+      printf("|       ||       ||   |    |   | |       ||   | |       ||   _   ||       ||   | |       ||  |  | ||       |  |  |\n");
+      printf("|    ___||    ___||   |    |   | |   ____||   | |_     _||  |_|  ||_     _||   | |   _   ||   |_| ||  _____|  |  |\n");
+      printf("|   |___ |   |___ |   |    |   | |  |     |   |   |   |  |       |  |   |  |   | |  | |  ||       || |_____   |  |\n");
+      printf("|    ___||    ___||   |    |   | |  |     |   |   |   |  |       |  |   |  |   | |  |_|  ||  _    ||_____  |  |__|\n");
+      printf("|   |    |   |___ |   |___ |   | |  |____ |   |   |   |  |   _   |  |   |  |   | |       || | |   | _____| |   __ \n");
+      printf("|___|    |_______||_______||___| |_______||___|   |___|  |__| |__|  |___|  |___| |_______||_|  |__||_______|  |__|\n");
+      printf("\n\nJoueur '%s' a gagné !\n", colorToken(graphics[player]));
+    }
     player = (turn + 1) % NBP;
   }
+  // Si pas de gagnant après la boucle -> Égalité
   if (!winner) printf("Égalité !\n");
   return 0;
 }
