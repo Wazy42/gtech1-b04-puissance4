@@ -1,11 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
-// #define WHITE "\033[00;37m"
 
 int NBL = 6, NBC = 7, NBP = 2;
-char graphics[] = {'x', 'o', 'm', 'z', 'u', 'v', 's', 'i', '%', '#'};
-// char* colors[] = {"\033[00;31m", "\033[00;32m", "\033[00;33m", "\033[00;34m", "\033[00;35m", "\033[00;36m"};
+char graphics[] = {'x', 'o', 'm', 'z', 'u', 'v'};
 char** table = NULL;
+
+char* colorToken(char token) {
+  switch (token) {
+  case 'x': return "\033[0;31mx\033[0m";
+  case 'o': return "\033[0;34mo\033[0m";
+  case 'm': return "\033[0;32mm\033[0m";
+  case 'z': return "\033[0;33mz\033[0m";
+  case 'u': return "\033[0;35mu\033[0m";
+  case 'v': return "\033[0;36mv\033[0m";
+  case ' ': return " ";
+  }
+}
 
 /*
 Fonction affichage:
@@ -15,6 +25,7 @@ Fonction affichage:
   Affiche le tableau `table` dynamiquement.1
 */
 int affiche(void) {
+  int token;
   printf("\n\n");
   for (int i = 0; i < NBC; i++) {
     printf("%3d ", i + 1);
@@ -25,9 +36,10 @@ int affiche(void) {
   }
   printf("\n");
   for (int i = 0; i < NBL; i++) {
-    printf("|");
+    printf("| ");
     for (int j = 0; j < NBC; j++) {
-      printf(" %c |", table[i][j]);
+      token = table[i][j];
+      printf("%s | ", colorToken(token));
     }
     printf("\n");
   }
@@ -40,10 +52,10 @@ int affiche(void) {
 
 /*
 Fonction vérification:
-  Argument `player`: caractère du joueur à verifier ('o' ou 'x')
+  Argument `player`: caractère du joueur à vérifier ('o' ou 'x')
   Retourne 0 si aucun gagnant, 1 si le joueur `player` est gagnant.
 
-  Vérifie le contenu de `table` pour vérifier si un jouer a gagné.
+  Vérifie le contenu de `table` pour vérifier si un joueur a gagné.
 */
 int verification(char player) {
   int count_h, count_v, count_dd, count_dg;
@@ -68,6 +80,14 @@ int verification(char player) {
 }
 
 /*
+Vide le buffer de scanf.
+*/
+void flushstdin() {
+  int c;
+  while ((c = getchar()) != '\n' && c != EOF) {}
+}
+
+/*
 Fonction puis4:
   Ne prends aucun argument.
   Retourne 0.
@@ -87,14 +107,18 @@ int puis4(void) {
 
   int winner = 0, player = 0, token;
   for (int turn = 0; turn < NBL * NBC && !winner; turn++) {
-    // Saisie et getsion des erreurs:
+    // Saisie et gestion des erreurs:
     do {
-      printf("\nEntrez un nombre entre 1 et %d:\n", NBC);
+      printf("\n Joueur '%s', entrez un nombre entre 1 et %d:\n", colorToken(graphics[player]), NBC);
       int ret = scanf("%d", &token);
       if (ret != 1) {
-	char tmp;
-	scanf("%c", &tmp);
+	printf("Lettres interdites !\n");
+	token = 0;
+      } else if (table[0][token-1] != ' ') {
+	printf("La colonne %d n'est pas accessible !\n", token);
+	token = 0;
       }
+      flushstdin();
     } while (token > NBC || token < 1);
 
     // Ajout des tokens à la grille
@@ -104,13 +128,13 @@ int puis4(void) {
 	break;
       }
     }
- 
+    // Détection potentiel gagnant et changement joueur
     affiche();
     winner = verification(graphics[player]);
+    if (winner) printf("Félicitation ! Joueur '%c' a gagné !\n", graphics[player]);    
     player = (turn + 1) % NBP;
   }
-  if (winner) printf("Félicitation ! Joueur '%c' a gagné !\n", graphics[!player]);
-  else printf("Égalité !\n");
+  if (!winner) printf("Égalité !\n");
   return 0;
 }
 
@@ -145,9 +169,9 @@ int main(int argc, char *argv[]) {
     NBC = 7;
   } if (argc == 4) {
     NBP = atoi(argv[3]);
-    if (NBP < 2 || NBP > 10) NBP = 2;
+    if (NBP < 2 || NBP > 6) NBP = 2;
   }
-  printf("Lancement en %dx%d.\n", NBL, NBC);
+  printf("Lancement en %dx%d, avec %d joueurs.\n", NBL, NBC, NBP);
 
   // Allocation mémoire pour `table`
   table = allocMalloc();
